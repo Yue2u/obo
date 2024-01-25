@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 import uvicorn
 
@@ -22,6 +23,16 @@ async def db_session_middleware(request: Request, call_next):
     response = await call_next(request)
     request.state.db.close()
     return response
+
+
+app.add_middleware(
+    CORSMiddleware(
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+)
 
 
 @app.get("/api/v1")
