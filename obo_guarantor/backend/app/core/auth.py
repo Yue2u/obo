@@ -3,7 +3,8 @@ from fastapi import Depends, HTTPException, status
 from jwt import PyJWTError
 
 from app.db import models, schemas, session
-from app.db.crud import get_user_by_email, create_user
+from app.db.crud import get_user_by_email, create_user, edit_user
+from app.db.schemas import UserEdit
 from app.core import security
 
 
@@ -73,3 +74,10 @@ def sign_up_new_user(db, email: str, password: str):
         ),
     )
     return new_user
+
+
+def set_new_password(db, user, new_password):
+    if not user:
+        return False
+    new_user_info = UserEdit(password=new_password)
+    edit_user(db, user.id, new_user_info)
